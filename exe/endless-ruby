@@ -1,3 +1,16 @@
 #!/usr/bin/env ruby
 
-require "endless/ruby"
+$:.unshift(File.expand_path("../../lib", __FILE__))
+require "endless"
+
+app = Rack::Builder.new do
+  use Rack::ShowExceptions
+  use Rack::CommonLogger
+  use Rack::Reloader
+  use Rack::Lint
+
+  run RackDAV::Handler.new(resource_class: Endless::DropboxResource)
+
+end.to_app
+
+Rack::Handler::WEBrick.run(app, :Port => 3000)
