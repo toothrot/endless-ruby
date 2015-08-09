@@ -1,12 +1,24 @@
 require 'digest'
 
 module Endless
+  module Dropbox
+    def self.client
+      DropboxClient.new(Dotenv.load()["DROPBOX_ACCESS_TOKEN"])
+    end
+  end
+
   class DropboxResource < ::RackDAV::Resource
     include WEBrick::HTTPUtils
+    APP_KEY = ENV['ENDLESS_DROPBOX_APP_KEY']
+    APP_SECRET = ENV['ENDLESS_DROPBOX_APP_SECRET']
+    ACCESS_TOKEN = ENV["DROPBOX_ACCESS_TOKEN"]
 
     # If this is a collection, return the child resources.
     def children
-      [ child("abc") ]
+      metadata = Dropbox.client.metadata(File.join("/", file_path))
+      metadata["contents"].map do |content|
+        child(content["path"])
+      end
     end
 
     # Is this resource a collection?
@@ -124,6 +136,16 @@ module Endless
     # Write to this resource from given IO.
     def write(io)
       puts 'write'
+    end
+
+    private
+
+    def root
+      "/"
+    end
+
+    def file_path
+      root + '/' + path
     end
   end
 end

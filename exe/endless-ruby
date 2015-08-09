@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 $:.unshift(File.expand_path("../../lib", __FILE__))
+require 'dotenv'
+Dotenv.load
+
 require "endless"
 
 app = Rack::Builder.new do
