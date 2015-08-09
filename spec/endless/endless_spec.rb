@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Endless::Ruby do
+describe Endless do
   it 'has a version number' do
-    expect(Endless::Ruby::VERSION).not_to be nil
+    expect(Endless::VERSION).not_to be nil
   end
 
   it 'does something useful' do
