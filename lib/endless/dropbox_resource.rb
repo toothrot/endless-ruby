@@ -16,14 +16,23 @@ module Endless
     # If this is a collection, return the child resources.
     def children
       metadata = Dropbox.client.metadata(File.join("/", file_path))
-      metadata["contents"].map do |content|
-        child(content["path"])
+      if metadata["contents"]
+        metadata["contents"].map do |content|
+          self.class.new(path + '/' + content["path"], @request, @response, options.merge(api_meta: content))
+        end
+      else
+        []
       end
     end
 
     # Is this resource a collection?
     def collection?
-      true
+      puts "#{path}: #{options.inspect}"
+      if options[:api_meta]
+        options[:api_meta]["is_dir"]
+      else
+        true
+      end
     end
 
     # Does this recource exist?
