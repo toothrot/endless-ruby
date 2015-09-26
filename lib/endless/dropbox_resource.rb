@@ -31,23 +31,35 @@ module Endless
       if options[:api_meta]
         options[:api_meta]["is_dir"]
       else
-        true
+        meta = Dropbox.client.metadata(path)
+        puts meta.inspect
+        (meta && meta["is_dir"]) || false
       end
     end
 
     # Does this recource exist?
     def exist?
       puts 'exist?'
-      true
+      return false if path =~ /\._/
+      if options[:api_meta]
+        true
+      else
+        begin
+          meta = Dropbox.client.metadata(path)
+          true
+        rescue DropboxError
+          false
+        end
+      end
     end
 
-    # Return the creation time.
-    def creation_date
-      puts 'creation_date'
-      Time.now
-    end
+      # Return the creation time.
+      def creation_date
+        puts 'creation_date'
+        Time.now
+      end
 
-    # Return the time of last modification.
+      # Return the time of last modification.
     def last_modified
       puts 'last_modified'
       Time.now
